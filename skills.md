@@ -17,7 +17,7 @@ This document defines practical, FalkorDB-specific skills with explicit examples
 
 Create labeled nodes and connect them with properties.
 
-[▶ Watch 8s demo](videos/cypher/01-create-nodes-and-relationships.mp4)
+![Demo](videos/cypher/01-create-nodes-and-relationships.gif)
 
 Example:
 
@@ -31,7 +31,7 @@ CREATE (alice)-[:FRIENDS_WITH {since: 1640995200}]->(bob)"
 
 Match by label/property and return fields.
 
-[▶ Watch 8s demo](videos/cypher/02-match-patterns-and-return-projections.mp4)
+![Demo](videos/cypher/02-match-patterns-and-return-projections.gif)
 
 Example:
 
@@ -44,7 +44,7 @@ RETURN friend.name"
 
 Use `MERGE` when you want idempotent upserts.
 
-[▶ Watch 8s demo](videos/cypher/03-use-merge-to-avoid-duplicate-nodes.mp4)
+![Demo](videos/cypher/03-use-merge-to-avoid-duplicate-nodes.gif)
 
 Example:
 
@@ -58,7 +58,7 @@ ON MATCH SET u.last_seen = timestamp()"
 
 Use `SET` for updates and set properties to `NULL` to remove them (no `REMOVE` support).
 
-[▶ Watch 8s demo](videos/cypher/04-update-and-remove-properties-safely.mp4)
+![Demo](videos/cypher/04-update-and-remove-properties-safely.gif)
 
 Example:
 
@@ -71,7 +71,7 @@ SET u.email = 'dana@example.com', u.temp = NULL"
 
 Use parameters so the query plan is cached and reused.
 
-[▶ Watch 8s demo](videos/cypher/05-parameterized-queries-for-cache-reuse.mp4)
+![Demo](videos/cypher/05-parameterized-queries-for-cache-reuse.gif)
 
 Example:
 
@@ -83,7 +83,7 @@ redis-cli GRAPH.QUERY social "CYPHER name='Alice' MATCH (u:User {name: $name}) R
 
 Use `GRAPH.RO_QUERY` for read-only paths; it rejects writes.
 
-[▶ Watch 8s demo](videos/cypher/06-run-safe-read-only-queries.mp4)
+![Demo](videos/cypher/06-run-safe-read-only-queries.gif)
 
 Example:
 
@@ -95,7 +95,7 @@ redis-cli GRAPH.RO_QUERY social "MATCH (u:User) RETURN count(u)"
 
 Use `GRAPH.EXPLAIN` to validate plan shape and index usage without executing.
 
-[▶ Watch 8s demo](videos/cypher/07-inspect-query-plans-before-execution.mp4)
+![Demo](videos/cypher/07-inspect-query-plans-before-execution.gif)
 
 Example:
 
@@ -107,7 +107,7 @@ redis-cli GRAPH.EXPLAIN social "MATCH (p:Person {age: 30}) RETURN p"
 
 Use `GRAPH.PROFILE` to see per-operator runtime and records.
 
-[▶ Watch 8s demo](videos/cypher/08-profile-query-runtime-behavior.mp4)
+![Demo](videos/cypher/08-profile-query-runtime-behavior.gif)
 
 Example:
 
@@ -120,7 +120,7 @@ RETURN f.name ORDER BY f.name LIMIT 10"
 
 Use indexes to speed up equality and range predicates.
 
-[▶ Watch 8s demo](videos/cypher/09-create-range-indexes.mp4)
+![Demo](videos/cypher/09-create-range-indexes.gif)
 
 Example:
 
@@ -132,7 +132,7 @@ redis-cli GRAPH.QUERY social "CREATE INDEX FOR (p:Person) ON (p.age)"
 
 Confirm plan uses index scans.
 
-[▶ Watch 8s demo](videos/cypher/10-verify-index-usage.mp4)
+![Demo](videos/cypher/10-verify-index-usage.gif)
 
 Example:
 
@@ -144,7 +144,7 @@ redis-cli GRAPH.EXPLAIN social "MATCH (p:Person) WHERE p.age = 30 RETURN p"
 
 Use RediSearch-backed full-text indexes for text search.
 
-[▶ Watch 8s demo](videos/cypher/11-full-text-indexes.mp4)
+![Demo](videos/cypher/11-full-text-indexes.gif)
 
 Example:
 
@@ -157,7 +157,7 @@ redis-cli GRAPH.QUERY social "CALL db.idx.fulltext.queryNodes('Movie', 'Jun*') Y
 
 Use HNSW vector indexes for ANN search.
 
-[▶ Watch 8s demo](videos/cypher/12-vector-indexes.mp4)
+![Demo](videos/cypher/12-vector-indexes.gif)
 
 Example:
 
@@ -173,7 +173,7 @@ YIELD node, score RETURN node.name, score"
 
 Create constraints and check status with `db.constraints()`.
 
-[▶ Watch 8s demo](videos/cypher/13-manage-constraints-async-creation.mp4)
+![Demo](videos/cypher/13-manage-constraints-async-creation.gif)
 
 Example:
 
@@ -188,7 +188,7 @@ Note: Confirm the exact `GRAPH.CONSTRAINT CREATE` syntax against current docs be
 
 Use introspection commands for operational visibility.
 
-[▶ Watch 8s demo](videos/cypher/14-inspect-graphs-and-memory-usage.mp4)
+![Demo](videos/cypher/14-inspect-graphs-and-memory-usage.gif)
 
 Example:
 
@@ -202,7 +202,7 @@ redis-cli GRAPH.MEMORY USAGE social
 
 Use slowlog to identify and reset slow queries.
 
-[▶ Watch 8s demo](videos/cypher/15-track-slow-queries.mp4)
+![Demo](videos/cypher/15-track-slow-queries.gif)
 
 Example:
 
@@ -215,7 +215,7 @@ redis-cli GRAPH.SLOWLOG social RESET
 
 Account for known limitations in query design.
 
-[▶ Watch 8s demo](videos/cypher/16-cypher-limitations-correctly.mp4)
+![Demo](videos/cypher/16-cypher-limitations-correctly.gif)
 
 Example:
 
@@ -232,7 +232,7 @@ redis-cli GRAPH.QUERY social "MATCH (p:Person) WHERE p.age <> 30 RETURN p"
 
 Register UDFs with `falkor.register` in JS.
 
-[▶ Watch 8s demo](videos/udf/01-load-js-udf-library.mp4)
+![Demo](videos/udf/01-load-js-udf-library.gif)
 
 Example:
 
@@ -258,7 +258,7 @@ db.udf_load(lib, script)
 
 UDFs behave like built-in functions.
 
-[▶ Watch 8s demo](videos/udf/02-call-udf-from-cypher.mp4)
+![Demo](videos/udf/02-call-udf-from-cypher.gif)
 
 Example:
 
@@ -275,7 +275,7 @@ print(result)
 
 Use `GRAPH.UDF LIST WITHCODE` to audit loaded libraries.
 
-[▶ Watch 8s demo](videos/udf/03-list-udf-libraries-with-code.mp4)
+![Demo](videos/udf/03-list-udf-libraries-with-code.gif)
 
 Example:
 
@@ -287,7 +287,7 @@ redis-cli GRAPH.UDF LIST WITHCODE
 
 Remove a specific library or flush all.
 
-[▶ Watch 8s demo](videos/udf/04-delete-or-flush-udf-libraries.mp4)
+![Demo](videos/udf/04-delete-or-flush-udf-libraries.gif)
 
 Example:
 
@@ -300,7 +300,7 @@ redis-cli GRAPH.UDF FLUSH
 
 UDFs cannot mutate the graph; they must be pure functions.
 
-[▶ Watch 8s demo](videos/udf/05-respect-udf-limitations.mp4)
+![Demo](videos/udf/05-respect-udf-limitations.gif)
 
 Example:
 
@@ -316,7 +316,7 @@ Example:
 
 Expose both database and UI ports.
 
-[▶ Watch 8s demo](videos/ops/01-run-with-browser-local-dev.mp4)
+![Demo](videos/ops/01-run-with-browser-local-dev.gif)
 
 Example:
 
@@ -328,7 +328,7 @@ docker run -p 6379:6379 -p 3000:3000 -it --rm falkordb/falkordb:latest
 
 Use the server-only image for lean deployments.
 
-[▶ Watch 8s demo](videos/ops/02-run-server-only.mp4)
+![Demo](videos/ops/02-run-server-only.gif)
 
 Example:
 
@@ -340,7 +340,7 @@ docker run -p 6379:6379 -it --rm falkordb/falkordb-server:latest
 
 Pass Redis server flags via environment variables.
 
-[▶ Watch 8s demo](videos/ops/03-set-auth-redis-args.mp4)
+![Demo](videos/ops/03-set-auth-redis-args.gif)
 
 Example:
 
@@ -354,7 +354,7 @@ docker run -p 6379:6379 -p 3000:3000 -it \
 
 Tune module-level settings (threads, timeout, cache size).
 
-[▶ Watch 8s demo](videos/ops/04-set-module-config-falkordb-args.mp4)
+![Demo](videos/ops/04-set-module-config-falkordb-args.gif)
 
 Example:
 
@@ -368,7 +368,7 @@ docker run -p 6379:6379 -p 3000:3000 -it \
 
 Define ports and env vars in a compose file.
 
-[▶ Watch 8s demo](videos/ops/05-docker-compose-local-stacks.mp4)
+![Demo](videos/ops/05-docker-compose-local-stacks.gif)
 
 Example:
 
@@ -388,7 +388,7 @@ services:
 
 Use `FALKORDB_URL` to point the browser container to the server.
 
-[▶ Watch 8s demo](videos/ops/06-browser-separate-server.mp4)
+![Demo](videos/ops/06-browser-separate-server.gif)
 
 Example:
 
