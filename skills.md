@@ -61,6 +61,8 @@ CREATE (bob:User {id: 2, name: 'Bob', email: 'bob@example.com'})
 CREATE (alice)-[:FRIENDS_WITH {since: 1640995200}]->(bob)"
 ```
 
+---
+
 ### 2) Match patterns and return projections
 
 Match by label/property and return fields.
@@ -73,6 +75,8 @@ Example:
 redis-cli GRAPH.QUERY social "MATCH (alice:User {name: 'Alice'})-[:FRIENDS_WITH]->(friend)
 RETURN friend.name"
 ```
+
+---
 
 ### 3) Use MERGE to avoid duplicate nodes
 
@@ -88,6 +92,8 @@ ON CREATE SET u.name = 'Dana'
 ON MATCH SET u.last_seen = timestamp()"
 ```
 
+---
+
 ### 4) Update and remove properties safely
 
 Use `SET` for updates and set properties to `NULL` to remove them (no `REMOVE` support).
@@ -101,6 +107,8 @@ redis-cli GRAPH.QUERY social "MATCH (u:User {id: 42})
 SET u.email = 'dana@example.com', u.temp = NULL"
 ```
 
+---
+
 ### 5) Use parameterized queries for cache reuse
 
 Use parameters so the query plan is cached and reused.
@@ -112,6 +120,8 @@ Example:
 ```bash
 redis-cli GRAPH.QUERY social "CYPHER name='Alice' MATCH (u:User {name: $name}) RETURN u.id"
 ```
+
+---
 
 ### 6) Run safe read-only queries
 
@@ -125,6 +135,8 @@ Example:
 redis-cli GRAPH.RO_QUERY social "MATCH (u:User) RETURN count(u)"
 ```
 
+---
+
 ### 7) Inspect query plans before execution
 
 Use `GRAPH.EXPLAIN` to validate plan shape and index usage without executing.
@@ -136,6 +148,8 @@ Example:
 ```bash
 redis-cli GRAPH.EXPLAIN social "MATCH (p:Person {age: 30}) RETURN p"
 ```
+
+---
 
 ### 8) Profile query runtime behavior
 
@@ -150,6 +164,8 @@ redis-cli GRAPH.PROFILE social "MATCH (u:User)-[:FRIENDS_WITH]->(f)
 RETURN f.name ORDER BY f.name LIMIT 10"
 ```
 
+---
+
 ### 9) Create range indexes for exact/range lookups
 
 Use indexes to speed up equality and range predicates.
@@ -161,6 +177,8 @@ Example:
 ```bash
 redis-cli GRAPH.QUERY social "CREATE INDEX FOR (p:Person) ON (p.age)"
 ```
+
+---
 
 ### 10) Verify index usage
 
@@ -174,6 +192,8 @@ Example:
 redis-cli GRAPH.EXPLAIN social "MATCH (p:Person) WHERE p.age = 30 RETURN p"
 ```
 
+---
+
 ### 11) Create and query full-text indexes
 
 Use RediSearch-backed full-text indexes for text search.
@@ -186,6 +206,8 @@ Example:
 redis-cli GRAPH.QUERY social "CALL db.idx.fulltext.createNodeIndex('Movie', 'title')"
 redis-cli GRAPH.QUERY social "CALL db.idx.fulltext.queryNodes('Movie', 'Jun*') YIELD node RETURN node.title"
 ```
+
+---
 
 ### 12) Create and query vector indexes
 
@@ -203,6 +225,8 @@ redis-cli GRAPH.QUERY social "CALL db.idx.vector.queryNodes('Product', 'embeddin
 YIELD node, score RETURN node.name, score"
 ```
 
+---
+
 ### 13) Manage constraints with awareness of async creation
 
 Create constraints and check status with `db.constraints()`.
@@ -218,6 +242,8 @@ redis-cli GRAPH.QUERY social "CALL db.constraints()"
 
 Note: Confirm the exact `GRAPH.CONSTRAINT CREATE` syntax against current docs before use.
 
+---
+
 ### 14) Inspect graphs and memory usage
 
 Use introspection commands for operational visibility.
@@ -232,6 +258,8 @@ redis-cli GRAPH.INFO social
 redis-cli GRAPH.MEMORY USAGE social
 ```
 
+---
+
 ### 15) Track slow queries
 
 Use slowlog to identify and reset slow queries.
@@ -244,6 +272,8 @@ Example:
 redis-cli GRAPH.SLOWLOG social
 redis-cli GRAPH.SLOWLOG social RESET
 ```
+
+---
 
 ### 16) Apply FalkorDB Cypher limitations correctly
 
@@ -288,6 +318,8 @@ falkor.register('UpperCaseOdd', UpperCaseOdd);
 db.udf_load(lib, script)
 ```
 
+---
+
 ### 2) Call a UDF from Cypher
 
 UDFs behave like built-in functions.
@@ -305,6 +337,8 @@ result = g.query("RETURN StringUtils.UpperCaseOdd('abcdef')").result_set
 print(result)
 ```
 
+---
+
 ### 3) List UDF libraries (with code)
 
 Use `GRAPH.UDF LIST WITHCODE` to audit loaded libraries.
@@ -316,6 +350,8 @@ Example:
 ```bash
 redis-cli GRAPH.UDF LIST WITHCODE
 ```
+
+---
 
 ### 4) Delete or flush UDF libraries
 
@@ -329,6 +365,8 @@ Example:
 redis-cli GRAPH.UDF DELETE StringUtils
 redis-cli GRAPH.UDF FLUSH
 ```
+
+---
 
 ### 5) Respect UDF limitations
 
@@ -358,6 +396,8 @@ Example:
 docker run -p 6379:6379 -p 3000:3000 -it --rm falkordb/falkordb:latest
 ```
 
+---
+
 ### 2) Run server-only for production-style usage
 
 Use the server-only image for lean deployments.
@@ -369,6 +409,8 @@ Example:
 ```bash
 docker run -p 6379:6379 -it --rm falkordb/falkordb-server:latest
 ```
+
+---
 
 ### 3) Set authentication using REDIS_ARGS
 
@@ -384,6 +426,8 @@ docker run -p 6379:6379 -p 3000:3000 -it \
   --rm falkordb/falkordb:latest
 ```
 
+---
+
 ### 4) Set module config using FALKORDB_ARGS
 
 Tune module-level settings (threads, timeout, cache size).
@@ -397,6 +441,8 @@ docker run -p 6379:6379 -p 3000:3000 -it \
   -e FALKORDB_ARGS="THREAD_COUNT 4 TIMEOUT 5000" \
   --rm falkordb/falkordb:latest
 ```
+
+---
 
 ### 5) Use Docker Compose for repeatable local stacks
 
@@ -417,6 +463,8 @@ services:
       - REDIS_ARGS=--requirepass falkordb
       - FALKORDB_ARGS=THREAD_COUNT 4
 ```
+
+  ---
 
 ### 6) Run the browser separately against a server
 
