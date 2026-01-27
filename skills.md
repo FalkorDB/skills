@@ -65,7 +65,7 @@ Use parameters so the query plan is cached and reused.
 Example:
 
 ```bash
-redis-cli GRAPH.QUERY social "CYPHER name=$name MATCH (u:User {name: $name}) RETURN u.id" name "Alice"
+redis-cli GRAPH.QUERY social "CYPHER name='Alice' MATCH (u:User {name: $name}) RETURN u.id"
 ```
 
 ### 6) Run safe read-only queries
@@ -155,6 +155,8 @@ redis-cli GRAPH.CONSTRAINT CREATE social UNIQUE NODE Person PROPERTIES 1 id
 redis-cli GRAPH.QUERY social "CALL db.constraints()"
 ```
 
+Note: Confirm the exact `GRAPH.CONSTRAINT CREATE` syntax against current docs before use.
+
 ### 14) Inspect graphs and memory usage
 
 Use introspection commands for operational visibility.
@@ -175,7 +177,7 @@ Example:
 
 ```bash
 redis-cli GRAPH.SLOWLOG social
-redis-cli GRAPH.QUERY social "CALL graph.slowlog_reset()"
+redis-cli GRAPH.SLOWLOG social RESET
 ```
 
 ### 16) Apply FalkorDB Cypher limitations correctly
@@ -185,9 +187,6 @@ Account for known limitations in query design.
 Example:
 
 ```bash
-# LIMIT does not constrain writes; use it only for result limiting
-redis-cli GRAPH.QUERY social "MATCH (u:User) RETURN u LIMIT 10"
-
 # Not-equal filters are not index-accelerated
 redis-cli GRAPH.QUERY social "MATCH (p:Person) WHERE p.age <> 30 RETURN p"
 ```
