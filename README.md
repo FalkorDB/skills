@@ -12,8 +12,6 @@ Curated, task-focused FalkorDB guidance for Claude Code and other agentic IDEs. 
 2. Add or adapt examples to match your project patterns.
 3. Load the file into Claude Code when you want FalkorDB‑specific guidance.
 
-## Visual guide (GIF demos)
-
 ### Cypher Skills
 
 #### 1) Create nodes and relationships
