@@ -4,7 +4,7 @@ import { SkillComposition } from "./Composition";
 import { skills } from "./skills";
 
 const FPS = 60;
-const DURATION_IN_FRAMES = FPS * 8;
+const DURATION_IN_FRAMES = FPS * 5;
 
 export const RemotionRoot: React.FC = () => {
   return (
