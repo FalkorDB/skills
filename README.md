@@ -2,15 +2,41 @@
 
 Curated, task-focused FalkorDB guidance for Claude Code and other agentic IDEs. Use this repository to load practical FalkorDB examples and workflows into your assistant for faster, higher‑quality answers.
 
-## What’s inside
 
-- [skills.md](skills.md): Practical FalkorDB skills with explicit examples.
+## What's inside
+
+This repository contains 27 individual FalkorDB skills organized into three categories:
+
+- **[cypher-skills/](cypher-skills/)**: 16 skills covering graph query operations, indexes, and optimization
+- **[udf-skills/](udf-skills/)**: 5 skills for User-Defined Functions in JavaScript
+- **[operations-skills/](operations-skills/)**: 6 skills for Docker deployment and configuration
+
+Each skill is in its own folder with a `skill.md` file formatted according to the [Claude skills specification](https://support.claude.com/en/articles/12512198-how-to-create-custom-skills), including YAML frontmatter with name and description, usage instructions, examples, and notes.
+
+For reference, the original consolidated format is still available in [skills.md](skills.md).
 
 ## Quick start
 
-1. Open [skills.md](skills.md).
-2. Add or adapt examples to match your project patterns.
-3. Load the file into Claude Code when you want FalkorDB‑specific guidance.
+### Using Individual Skills
+
+1. Browse the skill categories: [cypher-skills/](cypher-skills/), [udf-skills/](udf-skills/), or [operations-skills/](operations-skills/)
+2. Open any skill folder and view its `skill.md` file
+3. Load individual skills into Claude Code when you need specific FalkorDB guidance
+4. Each skill can be used independently or combined with others
+
+### Skill Format
+
+Each `skill.md` follows this structure:
+```yaml
+---
+name: Skill Name
+description: What the skill does and when to use it
+---
+# Skill Name
+## Usage
+## Example
+## Notes
+```
 
 ### Cypher Skills
 
