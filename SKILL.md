@@ -1,3 +1,15 @@
+---
+name: falkordb-skills
+description: >
+  Practical FalkorDB guidance — Cypher queries, UDF management, and Docker
+  operations. Use when writing or reviewing FalkorDB queries, setting up
+  FalkorDB containers, or working with user-defined functions.
+license: MIT
+metadata:
+  author: FalkorDB
+  version: "1.0"
+---
+
 ## Conventions
 
 - CLI examples use `redis-cli` unless noted.
