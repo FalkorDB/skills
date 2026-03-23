@@ -1,6 +1,6 @@
 # FalkorDB Skills
 
-Practical [FalkorDB](https://falkordb.com) guidance packaged as an [Agent Skill](https://agentskills.io). Give your AI coding assistant deep knowledge of FalkorDB — Cypher queries, user-defined functions, Docker operations, indexing, and more.
+Practical [FalkorDB](https://falkordb.com) guidance packaged as an [Agent Skill](https://agentskills.io). Give your AI coding assistant deep knowledge of FalkorDB -- Cypher queries, user-defined functions, Docker operations, indexing, and more.
 
 ## Why use this skill?
 
@@ -9,85 +9,87 @@ AI assistants know *about* graph databases, but they often get FalkorDB-specific
 | Category | Skills | What you get |
 | --- | --- | --- |
 | **Cypher** | 16 | Node/relationship CRUD, MERGE upserts, parameterized queries, EXPLAIN/PROFILE, range/full-text/vector indexes, constraints, introspection, slow-query tracking, and known limitations |
-| **UDFs** | 5 | Load JavaScript UDF libraries, call UDFs from Cypher, list/delete libraries, and understand U# FalkorDB Skills
+| **UDFs** | 5 | Load JavaScript UDF libraries, call UDFs from Cypher, list/delete libraries, and understand UDF constraints |
+| **Docker Ops** | 6 | Run with browser UI, server-only mode, authentication, module config, Docker Compose, and split browser/server deployments |
 
-Practical [s*
-Practical [Falk br
-## Why use this skill?
+## Quick start
 
-AI assistants know *about* graph databases, but they often get FalkorDB-specific details wrong: incorrect command syntax, missing index types, unsupported Cypher clauses. This skill fills those gaps with **27 runnable epoi
-AI assistants know *at 
-| Category | Skills | What you get |
-| --- | --- | --- |
-| **Cypher** | 16 | Node/relationship CRUD, MERGE upserts, parameterized queries, EXPLAIN/PROFILE, range/full-text/vector indexes, constraints, introspection, slow-query trackin
+### Clone into your project
+
+```bash
+git clone https://github.com/FalkorDB/skills.git .falkordb-skills
+```
+
+Then point your AI assistant at `.falkordb-skills/SKILL.md` when working with FalkorDB.
+
+### Or copy the file directly
+
+Download [`SKILL.md`](SKILL.md) and load it into any LLM context window -- everything is in that single file.
+
+## What's inside
+
+### Cypher Skills
 
 | # | Skill | Key command |
 | --- | --- | --- |
-| 1 | Create nodes and relationships | `GRAPH.| --- | --- | --- |
-| **Cypher** | te| **Cypher** | 16 je| **UDFs** | 5 | Load JavaScript UDF libraries, call UDFs from Cypher, list/delete libraries, and understand U# FalkorDB Skills
+| 1 | Create nodes and relationships | `GRAPH.QUERY ... CREATE` |
+| 2 | Match patterns and return projections | `GRAPH.QUERY ... MATCH ... RETURN` |
+| 3 | Use MERGE to avoid duplicate nodes | `GRAPH.QUERY ... MERGE` |
+| 4 | Update and remove properties safely | `SET prop = NULL` (no REMOVE) |
+| 5 | Parameterized queries for cache reuse | `CYPHER key=val ... $key` |
+| 6 | Run safe read-only queries | `GRAPH.RO_QUERY` |
+| 7 | Inspect query plans before execution | `GRAPH.EXPLAIN` |
+| 8 | Profile query runtime behavior | `GRAPH.PROFILE` |
+| 9 | Create range indexes | `CREATE INDEX FOR (n:Label) ON (n.prop)` |
+| 10 | Verify index usage | `GRAPH.EXPLAIN` then look for Index Scan |
+| 11 | Full-text indexes | `db.idx.fulltext.createNodeIndex` |
+| 12 | Vector indexes (HNSW / ANN) | `CREATE VECTOR INDEX ... OPTIONS {...}` |
+| 13 | Manage constraints (async creation) | `GRAPH.CONSTRAINT CREATE` |
+| 14 | Inspect graphs and memory usage | `GRAPH.LIST` / `GRAPH.INFO` / `GRAPH.MEMORY USAGE` |
+| 15 | Track slow queries | `GRAPH.SLOWLOG` |
+| 16 | Apply FalkorDB Cypher limitations | Not-equal filters are not index-accelerated |
 
-Practical [s*
-Practical [Falk br
-## Why use this skill?
+### UDF Skills
 
-AI assistants knet
-Practical [s*
-Practical [Falk br
-## Why use this skill?
-
-AI assistants know *about* graph databases, but they often get Falkect Practical [Fbe## Why use this s`G
-AI assistants know * PrAI assistants know *at 
-| Category | Skills | What you get |
-| --- | --- | --- |
-| **Cypher** | 16 | Node/relationship CRUD, MERGE upserts, parameterized queries, EXPLAIN/PROFILE, range/full-text/vector indexesdexes | `db.i| Category | Skills | In| --- | --- | --ctor indexes (HNSW / | **Cypher** | 16 TO
 | # | Skill | Key command |
 | --- | --- | --- |
-| 1 | Create nodes and relationships | `GRAPH.| --- | --- | --- |
-| **Cypher** | te| **Cypher** | 16 je| **UDFs** | 5 | Load JaAPH| --ORY USAGE` |
-| 15 | Trac| 1 | Create n | `GR| **Cypher** | te| **Cypher** | 16 je| **UDFs** | 5 | Load JavaSua
-Practical [s*
-Practical [Falk br
-## Why use this skill?
+| 1 | Load a JavaScript UDF library | `db.udf_load(lib, script)` |
+| 2 | Call a UDF from Cypher | `RETURN LibName.funcName(...)` |
+| 3 | List UDF libraries (with code) | `GRAPH.UDF LIST WITHCODE` |
+| 4 | Delete or flush UDF libraries | `GRAPH.UDF DELETE` / `GRAPH.UDF FLUSH` |
+| 5 | Respect UDF limitations | Pure functions only -- no graph mutations |
 
-AI assistants knet
-Practical [s*
-Practical [Falk br
-## Why use this skill?
+### Operations Skills (Docker)
 
-AI assistants know *about* grpt)Practical [Fll## Why use this sr 
-AI assistants knet
-PcNaPractical [s*
-PraList UDF librari## Whith code) | `G
-AI assistants know *E` AI assistants know * PrAI assistants know *at 
-| Category | Skills | What you get |
-| --- | --- | --- |ta| Category | Skills | What you get |
-| --- | ti| --- | --- | --- |
-| **Cypher** | r)| **Cypher** | 16 y | # | Skill | Key command |
+| # | Skill | Key command |
 | --- | --- | --- |
-| 1 | Create nodes and relationships | `GRAPH.| --- | --- | --- |
-| **Cypher** | te| **Cypher** | 16 je| **UDFs** | 5 | Load JaAPH| --ORY USAGE` |
-| 15 | Trac| 1 | Create n |AR| --- | --- | --- |
-| 1 | | | 1 | Create nodesfi| **Cypher** | te| **Cypher** | 16 je| **UDFs** | 5 | Load JaAPHse| 15 | Trac| 1 | Create n | `GR| **Cypher** | te| **Cypher** | 16 je| rom server Practical [s*
-Practical [Falk br
-## Why use this skill?
+| 1 | Run with browser for local dev | `docker run -p 6379:6379 -p 3000:3000 ...` |
+| 2 | Server-only for production | `falkordb/falkordb-server:latest` |
+| 3 | Set authentication | `-e REDIS_ARGS="--requirepass ..."` |
+| 4 | Set module config | `-e FALKORDB_ARGS="THREAD_COUNT 4 ..."` |
+| 5 | Docker Compose local stacks | Full `compose.yaml` example |
+| 6 | Browser separate from server | `FALKORDB_URL=redis://server:6379` |
 
-AI assistants knet
-Practical [s*
-Practi
+## Example
 
-Practical [Fs-## Why use this soc
-AI assistants knet
-Pe:UPractical [s*
-Pra 'Practical [Fl:## Why use this som'})
-   CREATE (bob:User AI assistants knet
-PcNaPractical [s*
-PraList UDF librari## Whith)-PcNaPractical [s*inPraList UDF libr->AI assistants know *E` AI assistants  pattern: a concise explanation followed by a runnable example.
+Skill #1 -- create nodes and relationships:
 
-## Scop| --- | --- | --- |ta| Category | Sro| --- | ti| --- | --- | --- |
-| **Cypher** | r)| **Cypheco| **Cypher** | r)| **Cypher*) | --- | --- | --- |
-| 1 | Create nodes and relationships | `GRA
+```bash
+redis-cli GRAPH.QUERY social \
+  "CREATE (alice:User {id: 1, name: 'Alice', email: 'alice@example.com'})
+   CREATE (bob:User {id: 2, name: 'Bob', email: 'bob@example.com'})
+   CREATE (alice)-[:FRIENDS_WITH {since: 1640995200}]->(bob)"
+```
 
-| 1 | CrTRIBUTING.md| **Cypher** | te|.
+All 27 skills follow this pattern: a concise explanation followed by a runnable example.
+
+## Scope and sources
+
+Content is derived from the official FalkorDB documentation at [docs.falkordb.com](https://docs.falkordb.com) and distilled into short, actionable snippets.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
