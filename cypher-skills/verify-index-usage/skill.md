@@ -29,7 +29,7 @@ redis-cli GRAPH.EXPLAIN social "MATCH (p:Person) WHERE p.age = 30 RETURN p"
 Common reasons a range index is not used even when it exists:
 
 - **Predicate uses `<>`** — not-equal is never index-accelerated
-- **Predicate uses `STARTS WITH`, `ENDS WITH`, or `CONTAINS`** — these string predicates do not trigger range index usage; use a full-text index instead (12.6× speedup measured)
+- **Predicate uses `STARTS WITH`, `ENDS WITH`, or `CONTAINS`** — these string predicates do not trigger range index usage; use a full-text index instead (12.6× measured for `STARTS WITH` prefix matching, 6.8× for general text search)
 - **`OR` across different labels** — prevents the planner from choosing a single index
 - **Predicate type mismatch** — e.g., range index exists but query uses text search patterns
 - **No index on the filtered property** — check with `CALL db.indexes()`

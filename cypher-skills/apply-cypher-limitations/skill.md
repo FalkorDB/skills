@@ -29,7 +29,7 @@ redis-cli GRAPH.QUERY social "MATCH (p:Person) WHERE p.age <> 30 RETURN p"
 ## Performance-relevant limitations
 
 - `<>` / `!=` (not-equal) is **never** index-accelerated — always full scan
-- `STARTS WITH`, `ENDS WITH`, `CONTAINS` do **not** use range indexes — use fulltext indexes instead (12.6× speedup measured)
+- `STARTS WITH`, `ENDS WITH`, `CONTAINS` do **not** use range indexes — use fulltext indexes instead (12.6× measured for prefix matching)
 - Regex `=~` operator is **not supported** in FalkorDB
 - Disjunctive labels `(n:A|B)` are not supported; only conjunctive `(n:A:B)` works
 - No composite (multi-property) indexes — each property gets a separate index

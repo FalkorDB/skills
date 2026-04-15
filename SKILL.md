@@ -193,7 +193,7 @@ redis-cli GRAPH.SLOWLOG social RESET
 Account for known limitations in query design.
 
 - `<>` / `!=` is **never** index-accelerated — always full scan
-- `STARTS WITH`, `ENDS WITH`, `CONTAINS` do **not** use range indexes — use fulltext instead (12.6× speedup)
+- `STARTS WITH`, `ENDS WITH`, `CONTAINS` do **not** use range indexes — use fulltext instead (12.6× measured for prefix matching)
 - Regex `=~` is **not supported**; disjunctive labels `(n:A|B)` not supported (only conjunctive `(n:A:B)`)
 - **LIMIT after eager ops**: `LIMIT` does not stop CREATE/DELETE/SET/MERGE/Sort/Aggregate from processing all rows first
 - **Relationship uniqueness**: enforced per MATCH clause — separate MATCH clauses can traverse the same relationship, affecting counts
@@ -251,7 +251,7 @@ Choose the right index type and diagnose when indexes are not used:
 - **Text search** → fulltext index — 6.8× speedup vs filter-based matching
 - **Similarity/ANN** → vector index
 - **MERGE lookup keys** → index for existence check — 11.6× speedup
-- **Predicates that bypass indexes**: `<>`, `STARTS WITH`, `ENDS WITH`, `CONTAINS`, `OR` across labels — use fulltext for string predicates (12.6× speedup)
+- **Predicates that bypass indexes**: `<>`, `STARTS WITH`, `ENDS WITH`, `CONTAINS`, `OR` across labels — use fulltext for string predicates (12.6× measured for prefix matching, 6.8× for general text search)
 - **No composite indexes** — FalkorDB creates single-property indexes only; index the most selective property
 - **Low-selectivity caution** — indexing boolean/status fields may not help or can regress
 

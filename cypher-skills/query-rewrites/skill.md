@@ -63,6 +63,6 @@ redis-cli GRAPH.QUERY social "MATCH (a:Person)-[:WORKS_AT]->(b:Company) RETURN a
 
 - Cartesian product avoidance is the single highest-impact rewrite (26× measured speedup)
 - Use `GRAPH.EXPLAIN` to verify your rewrite improved the execution plan
-- For parameterized queries and plan caching benefits, see `use-parameterized-queries` skill
+- For parameterized queries and plan caching benefits, see skill #5 (Use parameterized queries for cache reuse)
 - Some rewrites are planner-neutral — always check with EXPLAIN before and after
 - Measured speedups come from benchmarks on moderate datasets; your results may vary

@@ -23,7 +23,7 @@ Practical guide to choosing, creating, and troubleshooting FalkorDB indexes for 
 - **Range filter** — index the property used in `WHERE x > value` (2.9× speedup)
 - **MERGE lookup** — index the MERGE match key or bulk upserts degrade severely (11.6× speedup)
 - **Full-text search** — use fulltext index instead of `WHERE x CONTAINS '...'` with filter (6.8× speedup)
-- **STARTS WITH** — range indexes do **not** work for `STARTS WITH`; use fulltext index (12.6× speedup)
+- **STARTS WITH** — range indexes do **not** work for `STARTS WITH`; use fulltext index (12.6× measured for prefix matching)
 
 ### Predicates that bypass range indexes
 
