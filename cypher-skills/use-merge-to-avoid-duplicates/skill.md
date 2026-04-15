@@ -25,3 +25,9 @@ ON MATCH SET u.last_seen = timestamp()"
 - `ON CREATE SET` runs only when a new node is created
 - `ON MATCH SET` runs only when an existing node is matched
 - This ensures idempotent operations that can be safely repeated
+
+## Performance
+
+- **Index MERGE lookup properties** — without an index, MERGE performs a full label scan to check existence (11.6× measured speedup with an index on the match key)
+- For bulk upserts, missing indexes cause severe performance degradation
+- Create the index before running MERGE: `CREATE INDEX FOR (u:User) ON (u.id)` then `MERGE (u:User {id: $id})`

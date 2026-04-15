@@ -24,3 +24,9 @@ redis-cli GRAPH.QUERY social "CYPHER name='Alice' MATCH (u:User {name: $name}) R
 - Parameters are referenced in the query using `$name` syntax
 - This improves performance by avoiding repeated query parsing and planning
 - Parameterized queries also provide better security by preventing injection attacks
+
+## Performance
+
+- The plan cache key is `query_no_params` — parameterized queries share cached plans across different parameter values
+- Inline literals (e.g., `WHERE name = 'Alice'`) create unique cache entries, causing repeated parse and plan overhead
+- Plan caching benefit is validated by FalkorDB source code analysis; measured speedup in benchmarks was inconclusive due to client overhead dominating at small scale

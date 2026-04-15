@@ -1,13 +1,13 @@
 ---
 name: falkordb-skills
 description: >
-  Practical FalkorDB guidance — Cypher queries, UDF management, and Docker
-  operations. Use when writing or reviewing FalkorDB queries, setting up
-  FalkorDB containers, or working with user-defined functions.
+  Practical FalkorDB guidance — Cypher queries, performance tuning, UDF management,
+  and Docker operations. Use when writing or reviewing FalkorDB queries, optimizing
+  query performance, setting up FalkorDB containers, or working with user-defined functions.
 license: MIT
 metadata:
   author: FalkorDB
-  version: "1.0"
+  version: "1.1"
 ---
 
 ## Conventions
@@ -45,7 +45,7 @@ RETURN friend.name"
 
 ### 3) Use MERGE to avoid duplicate nodes
 
-Use `MERGE` when you want idempotent upserts.
+Use `MERGE` when you want idempotent upserts. **Index MERGE lookup properties** — without an index, MERGE performs a full label scan to check existence (11.6× measured speedup).
 
 Example:
 
@@ -68,7 +68,7 @@ SET u.email = 'dana@example.com', u.temp = NULL"
 
 ### 5) Use parameterized queries for cache reuse
 
-Use parameters so the query plan is cached and reused.
+Use parameters so the query plan is cached and reused. The cache key is `query_no_params` — parameterized queries share cached plans; inline literals create unique cache entries with repeated parse overhead.
 
 Example:
 
@@ -88,7 +88,7 @@ redis-cli GRAPH.RO_QUERY social "MATCH (u:User) RETURN count(u)"
 
 ### 7) Inspect query plans before execution
 
-Use `GRAPH.EXPLAIN` to validate plan shape and index usage without executing.
+Use `GRAPH.EXPLAIN` to validate plan shape and index usage without executing. Red flags: `Cartesian Product` (26× speedup when fixed), `Node By Label Scan` where Index Scan expected, late `Filter`, eager `Sort`.
 
 Example:
 
@@ -98,7 +98,7 @@ redis-cli GRAPH.EXPLAIN social "MATCH (p:Person {age: 30}) RETURN p"
 
 ### 8) Profile query runtime behavior
 
-Use `GRAPH.PROFILE` to see per-operator runtime and records.
+Use `GRAPH.PROFILE` to see per-operator runtime and records. Spot fan-out explosions where `Records produced` jumps 10×+ — the operator with the most `Execution time` is your optimization target.
 
 Example:
 
@@ -109,7 +109,7 @@ RETURN f.name ORDER BY f.name LIMIT 10"
 
 ### 9) Create range indexes for exact/range lookups
 
-Use indexes to speed up equality and range predicates.
+Use indexes to speed up equality (13.5× measured) and range predicates (2.9× measured). `<>` cannot use indexes. No composite indexes — index the most selective single property.
 
 Example:
 
@@ -119,7 +119,7 @@ redis-cli GRAPH.QUERY social "CREATE INDEX FOR (p:Person) ON (p.age)"
 
 ### 10) Verify index usage
 
-Confirm plan uses index scans.
+Confirm plan uses index scans. If you see `Node By Label Scan` + `Filter` instead of `Node By Index Scan`, the index is not being used. Common reasons: `<>` predicates, `STARTS WITH`/`ENDS WITH`/`CONTAINS` (use fulltext instead), `OR` across labels.
 
 Example:
 
@@ -129,7 +129,7 @@ redis-cli GRAPH.EXPLAIN social "MATCH (p:Person) WHERE p.age = 30 RETURN p"
 
 ### 11) Create and query full-text indexes
 
-Use RediSearch-backed full-text indexes for text search.
+Use RediSearch-backed full-text indexes for text search. Range indexes do **not** work for `STARTS WITH`, `ENDS WITH`, or `CONTAINS` — use fulltext instead (6.8× measured speedup).
 
 Example:
 
@@ -179,7 +179,7 @@ redis-cli GRAPH.MEMORY USAGE social
 
 ### 15) Track slow queries
 
-Use slowlog to identify and reset slow queries.
+Use slowlog to identify and reset slow queries. After finding slow queries: run `GRAPH.EXPLAIN` to check the plan, look for missing indexes and query anti-patterns, then apply optimizations from skills 17–19.
 
 Example:
 
@@ -192,11 +192,90 @@ redis-cli GRAPH.SLOWLOG social RESET
 
 Account for known limitations in query design.
 
+- `<>` / `!=` is **never** index-accelerated — always full scan
+- `STARTS WITH`, `ENDS WITH`, `CONTAINS` do **not** use range indexes — use fulltext instead (12.6× measured for prefix matching)
+- Regex `=~` is **not supported**; disjunctive labels `(n:A|B)` not supported (only conjunctive `(n:A:B)`)
+- **LIMIT after eager ops**: `LIMIT` does not stop CREATE/DELETE/SET/MERGE/Sort/Aggregate from processing all rows first
+- **Relationship uniqueness**: enforced per MATCH clause — separate MATCH clauses can traverse the same relationship, affecting counts
+
 Example:
 
 ```bash
 # Not-equal filters are not index-accelerated
 redis-cli GRAPH.QUERY social "MATCH (p:Person) WHERE p.age <> 30 RETURN p"
+```
+
+### 17) Optimize queries (performance triage)
+
+Systematic approach to diagnosing slow queries:
+
+1. **Gather inputs**: query text, FalkorDB version, current indexes (`CALL db.indexes()`), `GRAPH.EXPLAIN` output.
+2. **Check EXPLAIN for missing indexes**: `Node By Label Scan` where `Node By Index Scan` expected → create index.
+3. **Check query shape**: Cartesian products, late filters, optional branch bloat → rewrite query (see skill 18).
+4. **Check PROFILE for bottlenecks**: operators producing 10×+ more rows → supernode or missing filter.
+
+The planner auto-handles some patterns — do not recommend: label reordering (`costBaseLabelScan`), DISTINCT after aggregation (`reduceDistinct`), Cartesian → Hash Join when equality predicates connect streams (`applyJoin`).
+
+Example:
+
+```bash
+redis-cli GRAPH.EXPLAIN social "MATCH (p:Person) WHERE p.email = 'alice@example.com' RETURN p"
+# If "Node By Label Scan" appears, create an index:
+redis-cli GRAPH.QUERY social "CREATE INDEX FOR (p:Person) ON (p.email)"
+```
+
+### 18) Query rewrites for performance
+
+Structural rewrites that reduce intermediate result sets (measured speedups depend on data shape and scale):
+
+- **Cartesian product → relationship traversal (26× speedup)**: Replace `MATCH (a:Person), (b:Company) WHERE a.company_id = b.id` with `MATCH (a:Person)-[:WORKS_AT]->(b:Company)`.
+- **Late filter → index-backed filter (2.4×)**: Move filtered labels to separate early MATCH clauses so the planner applies indexes first.
+- **Optional branch bloat → direct MATCH (1.7×)**: Replace `OPTIONAL MATCH` with `MATCH` when NULLs are not needed.
+- **Planner-neutral**: label anchoring and DISTINCT after aggregation are auto-handled — no rewrite needed.
+- **Caution**: pattern comprehension for 1-hop counts can regress; use `CALL {}` subqueries for multi-hop (≥ 4.14.5).
+
+Example:
+
+```bash
+# Before: Cartesian product (slow)
+redis-cli GRAPH.QUERY social "MATCH (a:Person), (b:Company) WHERE a.company_id = b.id RETURN a.name, b.name"
+# After: relationship traversal (26x faster)
+redis-cli GRAPH.QUERY social "MATCH (a:Person)-[:WORKS_AT]->(b:Company) RETURN a.name, b.name"
+```
+
+### 19) Index strategy
+
+Choose the right index type and diagnose when indexes are not used:
+
+- **Equality/range predicates** → range index (`CREATE INDEX FOR (p:Person) ON (p.email)`) — 13.5× measured speedup
+- **Text search** → fulltext index — 6.8× speedup vs filter-based matching
+- **Similarity/ANN** → vector index
+- **MERGE lookup keys** → index for existence check — 11.6× speedup
+- **Predicates that bypass indexes**: `<>`, `STARTS WITH`, `ENDS WITH`, `CONTAINS`, `OR` across labels — use fulltext for string predicates (12.6× measured for prefix matching, 6.8× for general text search)
+- **No composite indexes** — FalkorDB creates single-property indexes only; index the most selective property
+- **Low-selectivity caution** — indexing boolean/status fields may not help or can regress
+
+Example:
+
+```bash
+redis-cli GRAPH.QUERY social "CREATE INDEX FOR (p:Person) ON (p.email)"
+redis-cli GRAPH.EXPLAIN social "MATCH (p:Person {email: 'alice@example.com'}) RETURN p"
+```
+
+### 20) Schema modeling for performance
+
+When rewrites and indexes are not enough, consider structural graph model changes (apply only with strong evidence from `GRAPH.PROFILE`):
+
+- **Supernode mitigation**: split high-degree nodes (10,000+ edges) into temporal/category buckets via intermediate nodes
+- **Relationship type specificity**: use specific types (`:AUTHORED`, `:REVIEWED`) instead of generic (`:RELATED_TO`) for planner selectivity
+- **Denormalize hot-path properties**: copy frequently-accessed properties onto relationships to avoid extra traversals
+
+Example:
+
+```bash
+# Check for supernodes in PROFILE output
+redis-cli GRAPH.PROFILE social "MATCH (c:Celebrity)-[:FOLLOWED_BY]->(f) RETURN count(f)"
+# If Conditional Traverse shows Records produced: 100000+, consider fan-out partitioning
 ```
 
 ---

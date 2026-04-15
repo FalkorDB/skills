@@ -25,3 +25,10 @@ RETURN f.name ORDER BY f.name LIMIT 10"
 - More detailed than `GRAPH.EXPLAIN` as it includes actual execution metrics
 - Useful for identifying performance bottlenecks in complex queries
 - Helps understand which operations are most expensive
+
+## Performance analysis tips
+
+- **Spot fan-out explosions**: look for operators where `Records produced` jumps 10×+ compared to the child operator — this indicates high-degree nodes (supernodes)
+- **Find the bottleneck**: the operator consuming the most `Execution time` is your optimization target
+- **`Conditional Traverse` producing far more rows than the scan feeding it** suggests a supernode problem — consider schema modeling changes
+- **Compare before/after**: run PROFILE on both the original and rewritten query to verify improvements

@@ -4,11 +4,12 @@ Practical [FalkorDB](https://falkordb.com) guidance packaged as an [Agent Skill]
 
 ## Why use this skill?
 
-AI assistants know *about* graph databases, but they often get FalkorDB-specific details wrong: incorrect command syntax, missing index types, unsupported Cypher clauses. This skill fills those gaps with **27 runnable examples** sourced from the [official docs](https://docs.falkordb.com), covering the three areas you need most:
+AI assistants know *about* graph databases, but they often get FalkorDB-specific details wrong: incorrect command syntax, missing index types, unsupported Cypher clauses. This skill fills those gaps with **31 runnable examples** sourced from the [official docs](https://docs.falkordb.com) and [benchmark-validated optimization research](https://github.com/FalkorDB/cypher-optimizations-skills), covering the areas you need most:
 
 | Category | Skills | What you get |
 | --- | --- | --- |
 | **Cypher** | 16 | Node/relationship CRUD, MERGE upserts, parameterized queries, EXPLAIN/PROFILE, range/full-text/vector indexes, constraints, introspection, slow-query tracking, and known limitations |
+| **Performance Tuning** | 4 | Query optimization triage, structural rewrites (up to 26× speedup), index strategy and pitfalls, schema modeling for supernodes |
 | **UDFs** | 5 | Load JavaScript UDF libraries, call UDFs from Cypher, list/delete libraries, and understand UDF constraints |
 | **Docker Ops** | 6 | Run with browser UI, server-only mode, authentication, module config, Docker Compose, and split browser/server deployments |
 
@@ -47,7 +48,16 @@ Download [`SKILL.md`](SKILL.md) and load it into any LLM context window -- every
 | 13 | Manage constraints (async creation) | `GRAPH.CONSTRAINT CREATE` |
 | 14 | Inspect graphs and memory usage | `GRAPH.LIST` / `GRAPH.INFO` / `GRAPH.MEMORY USAGE` |
 | 15 | Track slow queries | `GRAPH.SLOWLOG` |
-| 16 | Apply FalkorDB Cypher limitations | Not-equal filters are not index-accelerated |
+| 16 | Apply FalkorDB Cypher limitations | Not-equal filters, STARTS WITH/CONTAINS bypass, LIMIT after eager ops |
+
+### Performance Tuning Skills
+
+| # | Skill | Key takeaway |
+| --- | --- | --- |
+| 17 | Optimize queries (triage) | Gather inputs → check EXPLAIN → rewrite → index → schema |
+| 18 | Query rewrites | Cartesian product avoidance (26×), predicate pushdown (2.4×), optional branch (1.7×) |
+| 19 | Index strategy | Choose range/fulltext/vector, diagnose index bypass, avoid low-selectivity traps |
+| 20 | Schema modeling | Supernode mitigation, relationship type specificity, hot-path denormalization |
 
 ### UDF Skills
 
@@ -81,11 +91,11 @@ redis-cli GRAPH.QUERY social \
    CREATE (alice)-[:FRIENDS_WITH {since: 1640995200}]->(bob)"
 ```
 
-All 27 skills follow this pattern: a concise explanation followed by a runnable example.
+All 31 skills follow this pattern: a concise explanation followed by a runnable example.
 
 ## Scope and sources
 
-Content is derived from the official FalkorDB documentation at [docs.falkordb.com](https://docs.falkordb.com) and distilled into short, actionable snippets.
+Content is derived from the official FalkorDB documentation at [docs.falkordb.com](https://docs.falkordb.com) and performance optimization research at [FalkorDB/cypher-optimizations-skills](https://github.com/FalkorDB/cypher-optimizations-skills) (benchmark-validated with measured speedups).
 
 ## Contributing
 
