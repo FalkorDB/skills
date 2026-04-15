@@ -19,8 +19,17 @@ redis-cli GRAPH.EXPLAIN social "MATCH (p:Person) WHERE p.age = 30 RETURN p"
 
 ## Notes
 
-- Look for "Index Scan" operations in the execution plan
-- If you see "Label Scan" or "All Node Scan", the index is not being used
+- Look for "Node By Index Scan" operations in the execution plan
+- If you see "Node By Label Scan" + "Filter" instead of "Node By Index Scan", the index is not being used
 - Indexes are only used when predicates match the indexed properties
 - Ensure indexes exist before expecting them to be used
-- Some query patterns may prevent index usage (e.g., not-equal operators)
+
+## Why the planner skips an index
+
+Common reasons a range index is not used even when it exists:
+
+- **Predicate uses `<>`** — not-equal is never index-accelerated
+- **Predicate uses `STARTS WITH`, `ENDS WITH`, or `CONTAINS`** — these string predicates do not trigger range index usage; use a full-text index instead (12.6× speedup measured)
+- **`OR` across different labels** — prevents the planner from choosing a single index
+- **Predicate type mismatch** — e.g., range index exists but query uses text search patterns
+- **No index on the filtered property** — check with `CALL db.indexes()`

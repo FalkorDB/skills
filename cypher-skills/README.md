@@ -1,6 +1,6 @@
 # Cypher Skills
 
-This directory contains 16 individual skills related to FalkorDB Cypher query language operations.
+This directory contains 20 individual skills related to FalkorDB Cypher query language operations.
 
 ## Skills
 
@@ -20,6 +20,13 @@ This directory contains 16 individual skills related to FalkorDB Cypher query la
 14. **inspect-graphs-and-memory** - Monitor graph info and resource usage
 15. **track-slow-queries** - Identify performance bottlenecks
 16. **apply-cypher-limitations** - Work within FalkorDB Cypher limitations
+
+### Performance Tuning
+
+17. **optimize-queries** - Triage workflow for diagnosing and fixing slow queries
+18. **query-rewrites** - High-impact structural rewrites with measured speedups
+19. **index-strategy** - Choose the right index type, diagnose index bypass, avoid pitfalls
+20. **schema-modeling** - Graph model changes for performance (supernodes, relationship types)
 
 ## Usage
 

@@ -24,3 +24,12 @@ redis-cli GRAPH.QUERY social "CREATE INDEX FOR (p:Person) ON (p.age)"
 - Index creation is synchronous and may take time for large datasets
 - Multiple indexes can be created on different properties
 - Indexes consume additional memory but significantly improve query performance
+
+## Performance
+
+- Equality lookups benefit most — 13.5× measured speedup for indexed email lookup vs label scan
+- Range predicates (`>`, `<`, `>=`, `<=`) also use range indexes — 2.9× measured speedup
+- `<>` (not-equal) **cannot** use indexes — always results in a full label scan
+- Low-selectivity indexes (few distinct values like booleans or status fields) may not help or can regress
+- FalkorDB has **no composite indexes** — multi-property syntax creates separate single-property indexes; index the most selective property
+- Results depend on data shape and scale
