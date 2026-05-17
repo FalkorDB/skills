@@ -4,13 +4,14 @@ Practical [FalkorDB](https://falkordb.com) guidance packaged as an [Agent Skill]
 
 ## Why use this skill?
 
-AI assistants know *about* graph databases, but they often get FalkorDB-specific details wrong: incorrect command syntax, missing index types, unsupported Cypher clauses. This skill fills those gaps with **27 runnable examples** sourced from the [official docs](https://docs.falkordb.com), covering the three areas you need most:
+AI assistants know *about* graph databases, but they often get FalkorDB-specific details wrong: incorrect command syntax, missing index types, unsupported Cypher clauses. This skill fills those gaps with **31 runnable examples** sourced from the [official docs](https://docs.falkordb.com), covering the three areas you need most:
 
 | Category | Skills | What you get |
 | --- | --- | --- |
 | **Cypher** | 16 | Node/relationship CRUD, MERGE upserts, parameterized queries, EXPLAIN/PROFILE, range/full-text/vector indexes, constraints, introspection, slow-query tracking, and known limitations |
 | **UDFs** | 5 | Load JavaScript UDF libraries, call UDFs from Cypher, list/delete libraries, and understand UDF constraints |
 | **Docker Ops** | 6 | Run with browser UI, server-only mode, authentication, module config, Docker Compose, and split browser/server deployments |
+| **Ingestion** | 4 | Build databases from CSV using bulk loader, migrate data from Neo4j, convert and load from AWS Neptune, and continuously sync from SQL systems |
 
 ## Quick start
 
@@ -70,6 +71,15 @@ Download [`SKILL.md`](SKILL.md) and load it into any LLM context window -- every
 | 5 | Docker Compose local stacks | Full `compose.yaml` example |
 | 6 | Browser separate from server | `FALKORDB_URL=redis://server:6379` |
 
+### Ingestion Skills
+
+| # | Skill | Key command |
+| --- | --- | --- |
+| 1 | Use Bulk Loader from CSV | `falkordb-bulk-insert ...` |
+| 2 | Migrate Neo4j to FalkorDB | `neo4j_to_csv_extractor.py ...` |
+| 3 | Migrate Neptune to FalkorDB | `neptune_to_falkordb_converter.py ...` |
+| 4 | Migrate SQL to FalkorDB | `cargo run --release ...` |
+
 ## Example
 
 Skill #1 -- create nodes and relationships:
@@ -81,7 +91,7 @@ redis-cli GRAPH.QUERY social \
    CREATE (alice)-[:FRIENDS_WITH {since: 1640995200}]->(bob)"
 ```
 
-All 27 skills follow this pattern: a concise explanation followed by a runnable example.
+All 31 skills follow this pattern: a concise explanation followed by a runnable example.
 
 ## Scope and sources
 

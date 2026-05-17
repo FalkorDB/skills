@@ -1,9 +1,9 @@
 ---
 name: falkordb-skills
 description: >
-  Practical FalkorDB guidance — Cypher queries, UDF management, and Docker
-  operations. Use when writing or reviewing FalkorDB queries, setting up
-  FalkorDB containers, or working with user-defined functions.
+  Practical FalkorDB guidance — Cypher queries, UDF management, Docker
+  operations, and data ingestion. Use when writing or reviewing FalkorDB queries, setting up
+  FalkorDB containers, working with user-defined functions, or migrating data from other sources.
 license: MIT
 metadata:
   author: FalkorDB
@@ -358,4 +358,80 @@ services:
     environment:
       - FALKORDB_URL=redis://falkordb-server:6379
       - FALKORDB_PASSWORD=falkordb
+```
+
+---
+
+## Ingestion Skills
+
+### 1) Use Bulk Loader from CSV
+
+Build FalkorDB databases from CSV inputs using the `falkordb-bulk-loader` Python utility.
+
+Example:
+
+```bash
+falkordb-bulk-insert social \
+  -n Users.csv \
+  -N Company Companies.csv \
+  -r FRIENDS_WITH friends.csv \
+  -u redis://127.0.0.1:6379
+```
+
+### 2) Migrate Neo4j to FalkorDB
+
+Extract data from Neo4j to CSV and load it into FalkorDB without APOC.
+
+Example:
+
+```bash
+# 1. Extract from Neo4j
+python3 neo4j_to_csv_extractor.py \
+  --uri neo4j://localhost:7687 \
+  --username neo4j \
+  --password secret \
+  --database movies
+
+# 2. Load into FalkorDB
+python3 falkordb_csv_loader.py \
+  --config migrate_config.json \
+  --dir csv_output
+```
+
+### 3) Migrate Neptune to FalkorDB
+
+Convert AWS Neptune Export CSVs and load them into FalkorDB.
+
+Example:
+
+```bash
+# 1. Convert Neptune CSVs to FalkorDB format
+python3 neptune_to_falkordb_converter.py \
+  --input-dir /path/to/neptune/export \
+  --output-dir /path/to/falkordb/csvs
+
+# 2. Bulk load the converted files
+python3 bulk_load_to_falkordb.py \
+  --input-dir /path/to/falkordb/csvs \
+  --graph my_graph \
+  --host 127.0.0.1 \
+  --port 6379
+```
+
+### 4) Migrate SQL to FalkorDB
+
+Migrate and continuously sync data from SQL systems (e.g., PostgreSQL) into FalkorDB.
+
+Example:
+
+```bash
+# Build the tool
+cd PostgreSQL-to-FalkorDB/postgres-to-falkordb
+cargo build --release
+
+# Single run
+cargo run --release -- --config config.yaml
+
+# Continuous sync
+cargo run --release -- --config config.yaml --daemon --interval-secs 60
 ```
