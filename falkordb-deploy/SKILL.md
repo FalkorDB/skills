@@ -121,7 +121,7 @@ the connection inside the Docker network.
 | DB port | `6379` (Redis protocol) |
 | UI port | `3000` |
 | Redis flags (incl. auth) | `REDIS_ARGS="--requirepass ..."` |
-| Module tuning | `FALKORDB_ARGS="THREAD_COUNT n TIMEOUT ms ..."` |
+| Module tuning | `FALKORDB_ARGS="THREAD_COUNT n CACHE_SIZE n TIMEOUT_MAX ms ..."` |
 | Browser → server URL | `FALKORDB_URL=redis://<host>:6379` |
 | Browser auth | `FALKORDB_PASSWORD=...` |
 

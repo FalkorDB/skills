@@ -91,11 +91,14 @@ properties, and JSON-typed values.
 
 ### Source: SQL (PostgreSQL, MySQL, BigQuery, Snowflake, ...)
 
-A Rust tool maps relational tables to graph structures via a declarative
-config. Supports one-shot migration or continuous sync.
+[`DM-SQL-to-FalkorDB`](https://github.com/FalkorDB/DM-SQL-to-FalkorDB)
+is an umbrella repo of Rust CLI loaders that map relational tables to
+graph structures via a declarative config. One source per subdirectory.
+Supports one-shot migration and continuous sync (daemon mode).
 
 ```bash
-cd PostgreSQL-to-FalkorDB/postgres-to-falkordb
+git clone https://github.com/FalkorDB/DM-SQL-to-FalkorDB.git
+cd DM-SQL-to-FalkorDB/PostgreSQL-to-FalkorDB/postgres-to-falkordb
 cargo build --release
 
 # Single run
@@ -105,9 +108,16 @@ cargo run --release -- --config config.yaml
 cargo run --release -- --config config.yaml --daemon --interval-secs 60
 ```
 
+Swap `PostgreSQL-to-FalkorDB/postgres-to-falkordb` for the source you
+need: `BigQuery-to-FalkorDB/bigquery-to-falkordb`,
+`ClickHouse-to-FalkorDB`, `MySQL-to-FalkorDB/mysql-to-falkordb`, etc.
+A web control plane in the same repo configures and tracks ETL/CDC runs.
+
 Supported systems: BigQuery, ClickHouse, Databricks, MariaDB, MySQL,
-PostgreSQL, Snowflake, Spark, SQL Server. A web control plane is
-available for configuring and tracking ETL/CDC runs.
+PostgreSQL, Snowflake, Spark, SQL Server.
+
+> The standalone `FalkorDB/postgres-to-falkordb` repo is archived —
+> use `DM-SQL-to-FalkorDB` for active development.
 
 ## Reference
 
@@ -116,7 +126,7 @@ available for configuring and tracking ETL/CDC runs.
 | CSV | `falkordb-bulk-insert` | One-shot |
 | Neo4j | `neo4j_to_csv_extractor.py` → `falkordb_csv_loader.py` | One-shot, schema-aware |
 | Neptune | `neptune_to_falkordb_converter.py` → `bulk_load_to_falkordb.py` | One-shot |
-| SQL (9 engines) | `postgres-to-falkordb` (Rust) | One-shot or `--daemon` continuous |
+| SQL (9 engines) | [`DM-SQL-to-FalkorDB`](https://github.com/FalkorDB/DM-SQL-to-FalkorDB) (Rust) | One-shot or `--daemon` continuous |
 
 ## Gotchas
 
